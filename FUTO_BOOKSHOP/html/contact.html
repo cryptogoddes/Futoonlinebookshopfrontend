@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us - FUTO Bookshop</title>
+<link rel="stylesheet" href="../css/style2.css">
+<style>
+.contact-form-page {
+  max-width: 600px;
+  margin: 40px auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  font-family: Arial, sans-serif;
+}
+
+.contact-form-page h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.contact-form-page label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+  color: #555;
+}
+
+.contact-form-page input,
+.contact-form-page textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.contact-form-page button {
+  width: 100%;
+  background-color: #ffcc00;
+  border: none;
+  padding: 12px 0;
+  margin-top: 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s ease;
+}
+.contact-form-page button:hover {
+  background-color: #e6b800;
+}
+.contact-section h2,
+.contact-section p {
+  text-align: center;
+}
+#form-success {
+  display: none;
+  text-align: center;
+  margin: 20px auto;
+  padding: 15px;
+  max-width: 600px;
+  border-radius: 5px;
+  background-color: #d4edda;
+  color: #155724;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+</style>
+</head>
+
+
+<body>
+<header>
+<nav class="navbar">
+  <div class="logo">
+    <img src="../assets/logo.png" alt="FUTO Logo">
+    <span>FUTO Bookshop</span>
+  </div>
+  <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle menu">
+    ☰
+  </button>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="index.html">About</a></li>
+    <li><a href="#">Schedule</a></li>
+    <li><a href="contact.html" class="active">Contact Us</a></li>
+    <li><a href="login.html" class="btn">Login</a></li>
+  </ul>
+</nav>
+</header>
+
+<main>
+<section class="contact-section">
+  <h2>Contact Us</h2>
+  <p>If you have questions or complaints, fill out the form below and we will respond as soon as possible.</p>
+  <form id="contactForm" class="contact-form-page">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="message">Message:</label>
+    <textarea id="message" name="message" rows="6" required></textarea>
+
+    <button type="submit" class="btn-yellow">Submit</button>
+  </form>
+</section>
+
+<div id="form-success">Your message has been sent successfully!</div>
+</main>
+
+<footer>
+<p>© 2025 FUTO Online Bookshop. All rights reserved.</p>
+</footer>
+
+<script>
+const toggle = document.getElementById("menu-toggle");
+const nav = document.getElementById("nav-links");
+toggle.addEventListener("click", function () {
+  nav.classList.toggle("show");
+});
+const form = document.getElementById("contactForm");
+const successDiv = document.getElementById("form-success");
+
+form.addEventListener("submit", function(e) {
+  e.preventDefault(); 
+  const formData = new FormData(form);
+  fetch("../php/contact.php", {
+    method: "POST",
+    body: formData
+  })
+  .then(response => response.text())
+  .then(data => {
+    successDiv.style.display = "block";
+    form.reset();
+    setTimeout(() => { successDiv.style.display = "none"; }, 3000);
+  })
+  .catch(error => {
+    alert("An error occurred. Please try again.");
+    console.error("Error:", error);
+  });
+});
+</script>
+</body>
+</html>

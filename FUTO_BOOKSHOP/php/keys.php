@@ -1,0 +1,3 @@
+the keys on my paystack sk_test_3649b9b23e3b0e23e9719d8b571958b60989b783
+pk_test_e931f5b60ede8efed53583a225a95d52707e10e9
+my paystack test keys

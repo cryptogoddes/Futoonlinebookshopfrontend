@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FUTO Online Bookshop</title>
+<link rel="stylesheet" href="../css/style2.css">
+<style>
+/* for my chatbot styling only */
+#chatbot {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 300px;
+  max-height: 400px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1000;
+  transform: scale(0); 
+  transition: transform 0.3s ease;
+}
+
+#chatbot.active {
+  transform: scale(1);
+}
+
+#chatbot-header {
+  background: #ffcc00;
+  padding: 10px;
+  font-weight: bold;
+  text-align: center;
+  color: #333;
+  cursor: move;
+}
+
+#chatbot-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+#chatbot-messages {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+#chatbot-messages .bot-msg {
+  background: #f2f2f2;
+  padding: 6px 10px;
+  margin: 5px 0;
+  border-radius: 6px;
+}
+
+#chatbot-messages .user-msg {
+  background: #ffcc00;
+  padding: 6px 10px;
+  margin: 5px 0;
+  border-radius: 6px;
+  text-align: right;
+}
+
+#chatbot-input {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px;
+  flex: none;
+  width: calc(100% - 60px);
+  margin-right: 5px;
+}
+
+#chatbot-send {
+  padding: 8px 10px;
+  background: #ffcc00;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#chatbot-input-container {
+  display: flex;
+}
+#chatbot-icon {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background: #ffcc00;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 28px;
+  z-index: 1001;
+}
+</style>
+</head>
+<body>
+<header>
+<nav class="navbar">
+  <div class="logo">
+    <img src="../assets/logo.png" alt="FUTO Logo">
+    <span>FUTO Bookshop</span>
+  </div>
+
+  <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle menu" onclick="document.getElementById('nav-links').classList.toggle('show'); this.setAttribute('aria-expanded', document.getElementById('nav-links').classList.contains('show'));">☰</button>
+
+  <ul class="nav-links" id="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="index.html">About</a></li>
+    <li><a href="#">Schedule</a></li>
+    <li><a href="contact.html">Contact Us</a></li>
+    <li><a href="login.html" class="btn">Login</a></li>
+  </ul>
+</nav>
+</header>
+<section class="welcome">
+  <div class="welcome-text">
+    <h1>Welcome to <span>FUTO Online Bookshop</span></h1>
+    <h3>Access Textbooks & Schedule Pickups Easily!</h3>
+    <h4>Get Your Textbooks and Manuals Delivered With Ease.</h4><br>
+    <a href="login.html" class="btn-yellow">Get Started</a>
+  </div>
+  <div class="welcome-img">
+    <img src="../assets/student.png" alt="Happy Student">
+  </div>
+</section>
+
+<section class="features">
+  <h2>Why Choose Us?</h2>
+  <div class="feature-cards">
+    <div class="card">
+      <h3>📚 Wide Selection</h3>
+      <p>Find all your textbooks and manuals in one place.</p>
+    </div>
+    <div class="card">
+      <h3>🕒 Time-Slot Pickup</h3>
+      <p>Book a convenient pickup time that fits your schedule.</p>
+    </div>
+    <div class="card">
+      <h3>💳 Easy Payment</h3>
+      <p>Fast and secure online payment options available.</p>
+    </div>
+    <div class="card">
+      <h3>🚚 Quick Delivery</h3>
+      <p>Enjoy timely and reliable delivery service on campus.</p>
+    </div>
+  </div>
+</section>
+
+<section class="about">
+  <h2>About FUTO Bookshop</h2>
+  <p>The FUTO Online Bookshop is designed to make learning materials accessible 
+     to every student with ease. From textbooks to manuals, we bring convenience right to your fingertips.
+  </p>
+  <a href="#" class="btn">Learn More</a>
+</section>
+
+<footer>
+  <p>© CTech. 2025 FUTO Online Bookshop. All rights reserved.</p>
+</footer>
+
+<div id="chatbot-icon">💬</div>
+<div id="chatbot">
+  <div id="chatbot-header">💬 Chat with us</div>
+  <div id="chatbot-body">
+    <div id="chatbot-messages"></div>
+    <div id="chatbot-input-container">
+      <input type="text" id="chatbot-input" placeholder="Ask a question...">
+      <button id="chatbot-send">Send</button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+  const toggle = document.getElementById("menu-toggle");
+  const nav = document.getElementById("nav-links");
+  toggle.addEventListener("click", function () {
+    nav.classList.toggle("show");
+  });
+});
+const faqBot = {
+  "hello": "Hello! How can I assist you today?",
+  "hi": "Hi there! What can I do for you?",
+  "hey": "Hey! Feel free to ask me any question.",
+  "good morning": "Good morning! How can I help you today?",
+  "good afternoon": "Good afternoon! How can I help you today?",
+  "good evening": "Good evening! What can I assist you with?",
+  "good night": "Good night! If you have questions, just ask me anytime.",
+  "i need help": "Sure! What do you need assistance with? You can ask about textbooks, manuals, scheduling, payments, or orders.",
+  "can you assist": "Absolutely! Ask me anything about our bookshop services.",
+  "help me": "Of course! Please tell me what you need help with.",
+  "support": "I’m here to support you! You can ask about your orders, textbooks, or schedule.",
+  "opening hours": "We are open Monday to Friday, 9 AM - 2 PM.",
+  "when do you open": "Our bookshop opens Monday to Friday at 9 AM.",
+  "when do you close": "We close at 2 PM from Monday to Friday.",
+  "schedule pickup": "Go to the Schedule section and select a convenient time slot.",
+  "how to schedule": "Click on 'Schedule' on the homepage to pick a time slot for your textbooks.",
+  "payment": "We accept online payment, card payments, and campus payment options.",
+  "payment methods": "You can pay online, with your card, or at designated campus payment points.",
+  "textbooks": "Browse the Home page or the About section for available textbooks.",
+  "where to find textbooks": "All textbooks and manuals are listed on our website for easy access.",
+  "delivery": "We deliver textbooks directly to your pickup point on campus.",
+  "how long for delivery": "Delivery typically takes 1–2 business days depending on your time slot.",
+  "can you deliver books": "Yes! We deliver books directly to your scheduled pickup location.",
+  "contact": "If you have questions we can’t answer, please <a href='contact.html'>Contact Us</a>.",
+  "how can i contact": "You can contact us via the Contact Us page.",
+  "my order": "You can check your order status in your dashboard once logged in.",
+  "order status": "Go to your dashboard to view your current order status.",
+  "cancel order": "To cancel an order, please contact us through the Contact Us form.",
+  "refund": "Refund requests are handled via the Contact Us form after login.",
+  "return": "Returns and exchanges can be requested through our support team.",
+  "location": "We are located at FUTO campus, main library area.",
+  "where is the bookshop": "The bookshop is within FUTO campus near the library.",
+  "thank you": "You’re welcome! 😊",
+  "thanks": "No problem! Happy to help.",
+  "bye": "Goodbye! Have a great day!",
+  "goodbye": "See you later! Don’t hesitate to ask more questions.",
+  "see you": "See you! Come back anytime.",
+  "who are you": "I am the FUTO Bookshop virtual assistant, here to help you.",
+  "what can you do": "I can answer questions about textbooks, schedules, orders, delivery, payments, and more.",
+  "i am lost": "No worries! You can ask me anything or contact us for assistance.",
+  "faq": "I can help! Ask me about opening hours, delivery, payments, or orders.",
+  "what time": "We are open 8 AM to 6 PM from Monday to Friday.",
+  "where": "We are located at FUTO campus near the library.",
+  "help": "I’m here to help! Ask me anything related to the bookshop.",
+  "issue": "Please describe your issue, or go to the Contact Us page for detailed support.",
+  "problem": "I can guide you. If I don’t have the answer, please <a href='contact.html'>Contact Us</a>.",
+  "question": "Feel free to ask me any question about the bookshop.",
+  "how": "Please provide more details so I can assist you better.",
+  "what": "I can answer questions about textbooks, schedules, delivery, and payments.",
+  "who": "I can help you with all your FUTO bookshop related questions.",
+  "where to buy": "You can browse and buy textbooks directly from the website.",
+  "can i buy": "Yes! Select the book and follow the checkout process on the website.",
+  "checkout": "After adding books to your cart, click login and complete your order.",
+  "cart": "You can view your cart by clicking the cart icon at the top.",
+  "login": "Login using your student credentials to access your dashboard and orders.",
+  "register": "If you are a new user, click Sign Up to create an account.",
+  "account": "Your account dashboard shows your orders and schedule.",
+  "lost password": "If you forgot your password, use the 'Forgot Password' link on login.",
+  "forgot password": "Click 'Forgot Password' on login to reset it.",
+  "reset password": "You can reset your password via the login page link.",
+  "assistance": "I’m here to provide assistance. You can also <a href='contact.html'>Contact Us</a>.",
+  "support team": "For complex queries, please contact our support team via the Contact Us page.",
+  "faq page": "We currently provide FAQs here via the chatbot, or you can contact us directly.",
+  "help desk": "Please describe your issue or visit the Contact Us page."
+};
+
+
+const messages = document.getElementById("chatbot-messages");
+const input = document.getElementById("chatbot-input");
+const sendBtn = document.getElementById("chatbot-send");
+const chatbot = document.getElementById("chatbot");
+const chatbotIcon = document.getElementById("chatbot-icon");
+function addMessage(msg, sender) {
+  const div = document.createElement("div");
+  div.innerHTML = msg;
+  div.className = sender + "-msg";
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
+function getResponse(question) {
+  const q = question.toLowerCase();
+  for (let key in faqBot) {
+    if (q.includes(key)) return faqBot[key];
+  }
+  return "Sorry, I don't know the answer. Please <a href='contact.html'>Contact Us</a>.";
+}
+sendBtn.addEventListener("click", () => {
+  const userInput = input.value.trim();
+  if (!userInput) return;
+  addMessage(userInput, "user");
+  const botReply = getResponse(userInput);
+  addMessage(botReply, "bot");
+  input.value = "";
+});
+
+input.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") sendBtn.click();
+});
+chatbotIcon.addEventListener("click", () => {
+  chatbot.classList.toggle("active");
+});
+document.addEventListener("click", (e) => {
+  if (!chatbot.contains(e.target) && !chatbotIcon.contains(e.target)) {
+    chatbot.classList.remove("active");
+  }
+});
+</script>
+
+</body>
+</html>
